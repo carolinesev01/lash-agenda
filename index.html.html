@@ -1,0 +1,2288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lash Studio | Agenda</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --bordo: #6d1027;
+            --bordo-escuro: #4d0b1c;
+            --bordo-claro: #8d2942;
+            --branco: #ffffff;
+            --creme: #faf7f7;
+            --cinza: #777;
+            --cinza-claro: #eeeeee;
+            --verde: #2e8b57;
+            --vermelho: #c0392b;
+        }
+
+        body {
+            background: var(--creme);
+            color: #333;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* =========================
+           LOGIN
+        ========================= */
+
+        #authScreen {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background:
+                linear-gradient(
+                    rgba(77, 11, 28, 0.93),
+                    rgba(109, 16, 39, 0.93)
+                );
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: white;
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 35px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.3);
+            text-align: center;
+        }
+
+        .logo {
+            color: var(--bordo);
+            font-size: 42px;
+            font-family: Georgia, serif;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        .auth-box h2 {
+            color: var(--bordo);
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+            background: #fff;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            border-color: var(--bordo);
+            box-shadow: 0 0 0 3px rgba(109,16,39,.08);
+        }
+
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 13px 18px;
+            font-weight: bold;
+            transition: .2s;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--bordo);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--bordo-escuro);
+        }
+
+        .btn-secondary {
+            background: #eee;
+            color: #444;
+        }
+
+        .btn-danger {
+            background: var(--vermelho);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--verde);
+            color: white;
+        }
+
+        .auth-link {
+            margin-top: 20px;
+            color: var(--bordo);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* =========================
+           APP
+        ========================= */
+
+        #app {
+            min-height: 100vh;
+        }
+
+        header {
+            height: 70px;
+            background: var(--bordo);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.15);
+        }
+
+        .header-logo {
+            font-size: 25px;
+            font-family: Georgia, serif;
+            font-weight: bold;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-name {
+            font-size: 14px;
+        }
+
+        .logout {
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.3);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+        }
+
+        /* =========================
+           LAYOUT
+        ========================= */
+
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        aside {
+            width: 230px;
+            background: white;
+            border-right: 1px solid #eee;
+            padding: 20px 12px;
+        }
+
+        .menu-title {
+            color: #999;
+            font-size: 11px;
+            font-weight: bold;
+            margin: 10px 10px;
+            text-transform: uppercase;
+        }
+
+        .menu-btn {
+            width: 100%;
+            text-align: left;
+            padding: 13px 15px;
+            margin-bottom: 5px;
+            border: none;
+            border-radius: 9px;
+            background: transparent;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .menu-btn:hover,
+        .menu-btn.active {
+            background: #f5e8eb;
+            color: var(--bordo);
+        }
+
+        main {
+            flex: 1;
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .page {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .page-title {
+            color: var(--bordo);
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            color: #888;
+            margin-bottom: 25px;
+        }
+
+        /* =========================
+           DASHBOARD
+        ========================= */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            border: 1px solid #eee;
+            box-shadow: 0 3px 12px rgba(0,0,0,.04);
+        }
+
+        .card-title {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .card-number {
+            font-size: 30px;
+            font-weight: bold;
+            color: var(--bordo);
+        }
+
+        .section {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            border: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .section-header h3 {
+            color: var(--bordo);
+        }
+
+        /* =========================
+           AGENDA
+        ========================= */
+
+        .appointment {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            gap: 15px;
+        }
+
+        .appointment:last-child {
+            border-bottom: none;
+        }
+
+        .appointment-time {
+            min-width: 65px;
+            font-weight: bold;
+            color: var(--bordo);
+        }
+
+        .appointment-info {
+            flex: 1;
+        }
+
+        .appointment-name {
+            font-weight: bold;
+        }
+
+        .appointment-service {
+            font-size: 13px;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .appointment-actions {
+            display: flex;
+            gap: 7px;
+        }
+
+        .small-btn {
+            border: none;
+            border-radius: 7px;
+            padding: 7px 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* =========================
+           TABELA CLIENTES
+        ========================= */
+
+        .search {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 9px;
+            margin-bottom: 15px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            background: #faf4f5;
+            color: var(--bordo);
+            padding: 13px;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        /* =========================
+           MODAL
+        ========================= */
+
+        .modal-bg {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.55);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 550px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 17px;
+            padding: 25px;
+        }
+
+        .modal h2 {
+            color: var(--bordo);
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* =========================
+           RESPONSIVO
+        ========================= */
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            aside {
+                width: 190px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            header {
+                padding: 0 15px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .layout {
+                flex-direction: column;
+            }
+
+            aside {
+                width: 100%;
+                display: flex;
+                overflow-x: auto;
+                padding: 8px;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+
+            .menu-title {
+                display: none;
+            }
+
+            .menu-btn {
+                min-width: max-content;
+                margin: 0 4px;
+            }
+
+            main {
+                padding: 18px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .appointment {
+                align-items: flex-start;
+            }
+
+            .appointment-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================
+     TELA DE AUTENTICAÇÃO
+========================= -->
+
+<div id="authScreen">
+
+    <div class="auth-box">
+
+        <div class="logo">Lash</div>
+        <div class="subtitle">Agenda & Clientes</div>
+
+        <!-- LOGIN -->
+        <div id="loginForm">
+
+            <h2>Entrar</h2>
+
+            <div class="input-group">
+                <label>Nome de usuário</label>
+                <input
+                    type="text"
+                    id="loginUsername"
+                    placeholder="Digite seu usuário"
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Senha</label>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Digite sua senha"
+                >
+            </div>
+
+            <button class="btn btn-primary" onclick="login()">
+                Entrar
+            </button>
+
+            <div class="auth-link" onclick="showRegister()">
+                Ainda não tenho uma conta
+            </div>
+
+        </div>
+
+        <!-- CADASTRO -->
+        <div id="registerForm" class="hidden">
+
+            <h2>Criar conta</h2>
+
+            <div class="input-group">
+                <label>Seu nome</label>
+                <input
+                    type="text"
+                    id="registerName"
+                    placeholder="Ex: Maria"
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Nome de usuário</label>
+                <input
+                    type="text"
+                    id="registerUsername"
+                    placeholder="Ex: maria.lash"
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Senha</label>
+                <input
+                    type="password"
+                    id="registerPassword"
+                    placeholder="Crie uma senha"
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Confirmar senha</label>
+                <input
+                    type="password"
+                    id="registerPassword2"
+                    placeholder="Repita sua senha"
+                >
+            </div>
+
+            <button class="btn btn-primary" onclick="register()">
+                Criar minha conta
+            </button>
+
+            <div class="auth-link" onclick="showLogin()">
+                Já tenho uma conta
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     APLICAÇÃO
+========================= -->
+
+<div id="app" class="hidden">
+
+    <header>
+
+        <div class="header-logo">
+            Lash ✨
+        </div>
+
+        <div class="header-right">
+            <span class="user-name" id="headerUserName"></span>
+
+            <button class="logout" onclick="logout()">
+                Sair
+            </button>
+        </div>
+
+    </header>
+
+
+    <div class="layout">
+
+        <!-- MENU -->
+
+        <aside>
+
+            <div class="menu-title">
+                Menu
+            </div>
+
+            <button
+                class="menu-btn active"
+                onclick="showPage('dashboard', this)"
+            >
+                🏠 Início
+            </button>
+
+            <button
+                class="menu-btn"
+                onclick="showPage('agenda', this)"
+            >
+                📅 Agenda
+            </button>
+
+            <button
+                class="menu-btn"
+                onclick="showPage('clientes', this)"
+            >
+                👩 Clientes
+            </button>
+
+            <button
+                class="menu-btn"
+                onclick="openAppointmentModal()"
+            >
+                ➕ Novo agendamento
+            </button>
+
+            <button
+                class="menu-btn"
+                onclick="openClientModal()"
+            >
+                👤 Nova cliente
+            </button>
+
+        </aside>
+
+
+        <!-- CONTEÚDO -->
+
+        <main>
+
+            <!-- DASHBOARD -->
+
+            <div id="dashboardPage" class="page">
+
+                <h1 class="page-title">
+                    Olá, <span id="welcomeName"></span> 💕
+                </h1>
+
+                <p class="page-subtitle">
+                    Aqui está o resumo da sua agenda.
+                </p>
+
+
+                <div class="cards">
+
+                    <div class="card">
+                        <div class="card-title">
+                            Agendamentos hoje
+                        </div>
+
+                        <div
+                            class="card-number"
+                            id="todayAppointments"
+                        >
+                            0
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-title">
+                            Total de clientes
+                        </div>
+
+                        <div
+                            class="card-number"
+                            id="totalClients"
+                        >
+                            0
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-title">
+                            Próximo atendimento
+                        </div>
+
+                        <div
+                            class="card-number"
+                            id="nextAppointment"
+                            style="font-size:22px;"
+                        >
+                            --
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-title">
+                            Faturamento hoje
+                        </div>
+
+                        <div
+                            class="card-number"
+                            id="todayRevenue"
+                            style="font-size:22px;"
+                        >
+                            R$ 0,00
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="section">
+
+                    <div class="section-header">
+
+                        <h3>
+                            Agenda de hoje
+                        </h3>
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="openAppointmentModal()"
+                        >
+                            + Agendar
+                        </button>
+
+                    </div>
+
+                    <div id="todayList"></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- AGENDA -->
+
+            <div id="agendaPage" class="page hidden">
+
+                <h1 class="page-title">
+                    Agenda
+                </h1>
+
+                <p class="page-subtitle">
+                    Organize seus atendimentos.
+                </p>
+
+
+                <div class="section">
+
+                    <div class="section-header">
+
+                        <h3>
+                            Agendamentos
+                        </h3>
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="openAppointmentModal()"
+                        >
+                            + Novo agendamento
+                        </button>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>Escolha uma data</label>
+
+                        <input
+                            type="date"
+                            id="agendaDate"
+                            onchange="renderAgenda()"
+                        >
+
+                    </div>
+
+                    <div id="agendaList"></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CLIENTES -->
+
+            <div id="clientesPage" class="page hidden">
+
+                <h1 class="page-title">
+                    Clientes
+                </h1>
+
+                <p class="page-subtitle">
+                    Cadastre e acompanhe suas clientes.
+                </p>
+
+
+                <div class="section">
+
+                    <div class="section-header">
+
+                        <h3>
+                            Minhas clientes
+                        </h3>
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="openClientModal()"
+                        >
+                            + Nova cliente
+                        </button>
+
+                    </div>
+
+                    <input
+                        class="search"
+                        type="text"
+                        id="clientSearch"
+                        placeholder="🔎 Procurar cliente..."
+                        oninput="renderClients()"
+                    >
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Telefone</th>
+                                    <th>Último atendimento</th>
+                                    <th>Ações</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="clientsTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     MODAL CLIENTE
+========================= -->
+
+<div
+    id="clientModal"
+    class="modal-bg hidden"
+>
+
+    <div class="modal">
+
+        <h2>
+            <span id="clientModalTitle">
+                Nova cliente
+            </span>
+        </h2>
+
+        <input
+            type="hidden"
+            id="editingClientId"
+        >
+
+        <div class="input-group">
+
+            <label>Nome completo</label>
+
+            <input
+                type="text"
+                id="clientName"
+                placeholder="Nome da cliente"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>Telefone</label>
+
+            <input
+                type="tel"
+                id="clientPhone"
+                placeholder="(00) 00000-0000"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>Data de nascimento</label>
+
+            <input
+                type="date"
+                id="clientBirth"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>Observações</label>
+
+            <textarea
+                id="clientNotes"
+                rows="4"
+                placeholder="Preferências, alergias, observações..."
+            ></textarea>
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                class="btn btn-secondary"
+                onclick="closeClientModal()"
+            >
+                Cancelar
+            </button>
+
+            <button
+                class="btn btn-primary"
+                onclick="saveClient()"
+            >
+                Salvar cliente
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     MODAL AGENDAMENTO
+========================= -->
+
+<div
+    id="appointmentModal"
+    class="modal-bg hidden"
+>
+
+    <div class="modal">
+
+        <h2>
+            Novo agendamento
+        </h2>
+
+
+        <div class="input-group">
+
+            <label>Cliente</label>
+
+            <select id="appointmentClient">
+                <option value="">
+                    Selecione uma cliente
+                </option>
+            </select>
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>Data</label>
+
+            <input
+                type="date"
+                id="appointmentDate"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>Horário</label>
+
+            <input
+                type="time"
+                id="appointmentTime"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>Serviço</label>
+
+            <select id="appointmentService">
+
+                <option value="Alongamento">
+                    Alongamento
+                </option>
+
+                <option value="Manutenção">
+                    Manutenção
+                </option>
+
+                <option value="Volume Brasileiro">
+                    Volume Brasileiro
+                </option>
+
+                <option value="Volume Russo">
+                    Volume Russo
+                </option>
+
+                <option value="Volume Híbrido">
+                    Volume Híbrido
+                </option>
+
+                <option value="Lash Lifting">
+                    Lash Lifting
+                </option>
+
+                <option value="Outro">
+                    Outro
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>Valor (R$)</label>
+
+            <input
+                type="number"
+                id="appointmentPrice"
+                placeholder="0,00"
+                step="0.01"
+                min="0"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>Observações</label>
+
+            <textarea
+                id="appointmentNotes"
+                rows="3"
+                placeholder="Alguma observação..."
+            ></textarea>
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                class="btn btn-secondary"
+                onclick="closeAppointmentModal()"
+            >
+                Cancelar
+            </button>
+
+            <button
+                class="btn btn-primary"
+                onclick="saveAppointment()"
+            >
+                Salvar agendamento
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* ======================================
+       SISTEMA DE CONTAS
+    ====================================== */
+
+    function getUsers() {
+        return JSON.parse(
+            localStorage.getItem("lash_users") || "[]"
+        );
+    }
+
+
+    function saveUsers(users) {
+        localStorage.setItem(
+            "lash_users",
+            JSON.stringify(users)
+        );
+    }
+
+
+    function showRegister() {
+
+        document
+            .getElementById("loginForm")
+            .classList.add("hidden");
+
+        document
+            .getElementById("registerForm")
+            .classList.remove("hidden");
+    }
+
+
+    function showLogin() {
+
+        document
+            .getElementById("registerForm")
+            .classList.add("hidden");
+
+        document
+            .getElementById("loginForm")
+            .classList.remove("hidden");
+    }
+
+
+    function register() {
+
+        const name =
+            document.getElementById("registerName").value.trim();
+
+        const username =
+            document.getElementById("registerUsername").value.trim();
+
+        const password =
+            document.getElementById("registerPassword").value;
+
+        const password2 =
+            document.getElementById("registerPassword2").value;
+
+
+        if (!name || !username || !password) {
+
+            alert("Preencha todos os campos.");
+
+            return;
+        }
+
+
+        if (password !== password2) {
+
+            alert("As senhas não são iguais.");
+
+            return;
+        }
+
+
+        const users = getUsers();
+
+
+        const exists = users.some(
+            user =>
+                user.username.toLowerCase() ===
+                username.toLowerCase()
+        );
+
+
+        if (exists) {
+
+            alert("Esse nome de usuário já existe.");
+
+            return;
+        }
+
+
+        const newUser = {
+
+            id: Date.now(),
+
+            name: name,
+
+            username: username,
+
+            password: password,
+
+            clients: [],
+
+            appointments: []
+
+        };
+
+
+        users.push(newUser);
+
+        saveUsers(users);
+
+
+        alert("Conta criada com sucesso! ❤️");
+
+
+        document.getElementById("loginUsername").value =
+            username;
+
+        document.getElementById("loginPassword").value =
+            password;
+
+
+        showLogin();
+    }
+
+
+    function login() {
+
+        const username =
+            document.getElementById("loginUsername").value.trim();
+
+        const password =
+            document.getElementById("loginPassword").value;
+
+
+        const users = getUsers();
+
+
+        const user = users.find(
+            item =>
+                item.username.toLowerCase() ===
+                username.toLowerCase() &&
+                item.password === password
+        );
+
+
+        if (!user) {
+
+            alert("Usuário ou senha incorretos.");
+
+            return;
+        }
+
+
+        localStorage.setItem(
+            "lash_logged_user",
+            user.id
+        );
+
+
+        loadApp();
+    }
+
+
+    function logout() {
+
+        localStorage.removeItem("lash_logged_user");
+
+        document
+            .getElementById("app")
+            .classList.add("hidden");
+
+        document
+            .getElementById("authScreen")
+            .classList.remove("hidden");
+    }
+
+
+    function getCurrentUser() {
+
+        const userId =
+            localStorage.getItem("lash_logged_user");
+
+        if (!userId) return null;
+
+
+        const users = getUsers();
+
+        return users.find(
+            user => user.id == userId
+        );
+    }
+
+
+    function updateCurrentUser(updatedUser) {
+
+        const users = getUsers();
+
+        const index = users.findIndex(
+            user => user.id == updatedUser.id
+        );
+
+
+        if (index !== -1) {
+
+            users[index] = updatedUser;
+
+            saveUsers(users);
+        }
+    }
+
+
+    /* ======================================
+       INICIALIZAÇÃO
+    ====================================== */
+
+    function loadApp() {
+
+        const user = getCurrentUser();
+
+
+        if (!user) {
+
+            document
+                .getElementById("app")
+                .classList.add("hidden");
+
+            document
+                .getElementById("authScreen")
+                .classList.remove("hidden");
+
+            return;
+        }
+
+
+        document
+            .getElementById("authScreen")
+            .classList.add("hidden");
+
+        document
+            .getElementById("app")
+            .classList.remove("hidden");
+
+
+        document.getElementById("headerUserName")
+            .textContent = user.name;
+
+        document.getElementById("welcomeName")
+            .textContent = user.name;
+
+
+        const today =
+            getToday();
+
+
+        document.getElementById("agendaDate")
+            .value = today;
+
+
+        renderAll();
+    }
+
+
+    function renderAll() {
+
+        renderDashboard();
+
+        renderAgenda();
+
+        renderClients();
+
+        populateClientSelect();
+    }
+
+
+    function getToday() {
+
+        const date = new Date();
+
+        const year =
+            date.getFullYear();
+
+        const month =
+            String(date.getMonth() + 1)
+                .padStart(2, "0");
+
+        const day =
+            String(date.getDate())
+                .padStart(2, "0");
+
+
+        return `${year}-${month}-${day}`;
+    }
+
+
+    /* ======================================
+       PÁGINAS
+    ====================================== */
+
+    function showPage(page, button) {
+
+        document
+            .querySelectorAll(".page")
+            .forEach(
+                item => item.classList.add("hidden")
+            );
+
+
+        document
+            .getElementById(page + "Page")
+            .classList.remove("hidden");
+
+
+        document
+            .querySelectorAll(".menu-btn")
+            .forEach(
+                item => item.classList.remove("active")
+            );
+
+
+        if (button) {
+
+            button.classList.add("active");
+
+        }
+    }
+
+
+    /* ======================================
+       CLIENTES
+    ====================================== */
+
+    function openClientModal(clientId = null) {
+
+        const modal =
+            document.getElementById("clientModal");
+
+
+        document
+            .getElementById("editingClientId")
+            .value = "";
+
+
+        document.getElementById("clientName").value = "";
+
+        document.getElementById("clientPhone").value = "";
+
+        document.getElementById("clientBirth").value = "";
+
+        document.getElementById("clientNotes").value = "";
+
+
+        document.getElementById("clientModalTitle")
+            .textContent = "Nova cliente";
+
+
+        if (clientId) {
+
+            const user = getCurrentUser();
+
+            const client =
+                user.clients.find(
+                    item => item.id == clientId
+                );
+
+
+            if (client) {
+
+                document.getElementById("editingClientId")
+                    .value = client.id;
+
+                document.getElementById("clientName")
+                    .value = client.name;
+
+                document.getElementById("clientPhone")
+                    .value = client.phone;
+
+                document.getElementById("clientBirth")
+                    .value = client.birth;
+
+                document.getElementById("clientNotes")
+                    .value = client.notes;
+
+                document.getElementById("clientModalTitle")
+                    .textContent = "Editar cliente";
+            }
+        }
+
+
+        modal.classList.remove("hidden");
+    }
+
+
+    function closeClientModal() {
+
+        document
+            .getElementById("clientModal")
+            .classList.add("hidden");
+    }
+
+
+    function saveClient() {
+
+        const user = getCurrentUser();
+
+        if (!user) return;
+
+
+        const editingId =
+            document.getElementById("editingClientId").value;
+
+
+        const client = {
+
+            id: editingId
+                ? Number(editingId)
+                : Date.now(),
+
+            name:
+                document.getElementById("clientName")
+                    .value.trim(),
+
+            phone:
+                document.getElementById("clientPhone")
+                    .value.trim(),
+
+            birth:
+                document.getElementById("clientBirth")
+                    .value,
+
+            notes:
+                document.getElementById("clientNotes")
+                    .value.trim()
+
+        };
+
+
+        if (!client.name) {
+
+            alert("Digite o nome da cliente.");
+
+            return;
+        }
+
+
+        if (editingId) {
+
+            const index =
+                user.clients.findIndex(
+                    item => item.id == editingId
+                );
+
+
+            if (index !== -1) {
+
+                user.clients[index] = client;
+            }
+
+        } else {
+
+            user.clients.push(client);
+        }
+
+
+        updateCurrentUser(user);
+
+        closeClientModal();
+
+        renderAll();
+    }
+
+
+    function deleteClient(id) {
+
+        if (
+            !confirm(
+                "Tem certeza que deseja excluir esta cliente?"
+            )
+        ) {
+            return;
+        }
+
+
+        const user = getCurrentUser();
+
+
+        user.clients =
+            user.clients.filter(
+                client => client.id != id
+            );
+
+
+        updateCurrentUser(user);
+
+        renderAll();
+    }
+
+
+    function renderClients() {
+
+        const user = getCurrentUser();
+
+        if (!user) return;
+
+
+        const tbody =
+            document.getElementById("clientsTable");
+
+
+        const search =
+            document.getElementById("clientSearch")
+                .value
+                .toLowerCase();
+
+
+        const clients =
+            user.clients.filter(
+                client =>
+                    client.name
+                        .toLowerCase()
+                        .includes(search)
+            );
+
+
+        tbody.innerHTML = "";
+
+
+        if (clients.length === 0) {
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align:center;color:#999;">
+                        Nenhuma cliente encontrada.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        clients.forEach(client => {
+
+            const lastAppointment =
+                user.appointments
+                    .filter(
+                        appointment =>
+                            appointment.clientId == client.id
+                    )
+                    .sort(
+                        (a,b) =>
+                            new Date(b.date + "T" + b.time)
+                            -
+                            new Date(a.date + "T" + a.time)
+                    )[0];
+
+
+            const lastDate =
+                lastAppointment
+                    ? formatDate(lastAppointment.date)
+                    : "--";
+
+
+            tbody.innerHTML += `
+
+                <tr>
+
+                    <td>
+                        <strong>${escapeHTML(client.name)}</strong>
+                    </td>
+
+                    <td>
+                        ${escapeHTML(client.phone || "--")}
+                    </td>
+
+                    <td>
+                        ${lastDate}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="small-btn btn-secondary"
+                            onclick="openClientModal(${client.id})"
+                        >
+                            Editar
+                        </button>
+
+                        <button
+                            class="small-btn btn-danger"
+                            onclick="deleteClient(${client.id})"
+                        >
+                            Excluir
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+        });
+    }
+
+
+    /* ======================================
+       AGENDAMENTOS
+    ====================================== */
+
+    function openAppointmentModal() {
+
+        const user = getCurrentUser();
+
+
+        if (!user) return;
+
+
+        if (user.clients.length === 0) {
+
+            alert(
+                "Cadastre pelo menos uma cliente antes de criar um agendamento."
+            );
+
+            openClientModal();
+
+            return;
+        }
+
+
+        populateClientSelect();
+
+
+        document.getElementById("appointmentDate")
+            .value = getToday();
+
+
+        document.getElementById("appointmentTime")
+            .value = "";
+
+
+        document.getElementById("appointmentPrice")
+            .value = "";
+
+
+        document.getElementById("appointmentNotes")
+            .value = "";
+
+
+        document.getElementById("appointmentModal")
+            .classList.remove("hidden");
+    }
+
+
+    function closeAppointmentModal() {
+
+        document
+            .getElementById("appointmentModal")
+            .classList.add("hidden");
+    }
+
+
+    function populateClientSelect() {
+
+        const user = getCurrentUser();
+
+        if (!user) return;
+
+
+        const select =
+            document.getElementById("appointmentClient");
+
+
+        select.innerHTML =
+            `<option value="">
+                Selecione uma cliente
+            </option>`;
+
+
+        user.clients
+            .sort(
+                (a,b) =>
+                    a.name.localeCompare(b.name)
+            )
+            .forEach(client => {
+
+                select.innerHTML += `
+                    <option value="${client.id}">
+                        ${escapeHTML(client.name)}
+                    </option>
+                `;
+            });
+    }
+
+
+    function saveAppointment() {
+
+        const user = getCurrentUser();
+
+        if (!user) return;
+
+
+        const clientId =
+            document.getElementById("appointmentClient")
+                .value;
+
+
+        const date =
+            document.getElementById("appointmentDate")
+                .value;
+
+
+        const time =
+            document.getElementById("appointmentTime")
+                .value;
+
+
+        const service =
+            document.getElementById("appointmentService")
+                .value;
+
+
+        const price =
+            Number(
+                document.getElementById("appointmentPrice")
+                    .value || 0
+            );
+
+
+        const notes =
+            document.getElementById("appointmentNotes")
+                .value.trim();
+
+
+        if (!clientId || !date || !time) {
+
+            alert(
+                "Preencha cliente, data e horário."
+            );
+
+            return;
+        }
+
+
+        const conflict =
+            user.appointments.some(
+                appointment =>
+                    appointment.date === date &&
+                    appointment.time === time
+            );
+
+
+        if (conflict) {
+
+            if (
+                !confirm(
+                    "Já existe um atendimento nesse horário. Deseja continuar?"
+                )
+            ) {
+                return;
+            }
+        }
+
+
+        user.appointments.push({
+
+            id: Date.now(),
+
+            clientId: Number(clientId),
+
+            date: date,
+
+            time: time,
+
+            service: service,
+
+            price: price,
+
+            notes: notes
+
+        });
+
+
+        updateCurrentUser(user);
+
+        closeAppointmentModal();
+
+        renderAll();
+
+        alert("Agendamento salvo! 💕");
+    }
+
+
+    function deleteAppointment(id) {
+
+        if (
+            !confirm(
+                "Deseja excluir este agendamento?"
+            )
+        ) {
+            return;
+        }
+
+
+        const user = getCurrentUser();
+
+
+        user.appointments =
+            user.appointments.filter(
+                appointment =>
+                    appointment.id != id
+            );
+
+
+        updateCurrentUser(user);
+
+        renderAll();
+    }
+
+
+    function renderAgenda() {
+
+        const user = getCurrentUser();
+
+        if (!user) return;
+
+
+        const date =
+            document.getElementById("agendaDate").value;
+
+
+        const list =
+            document.getElementById("agendaList");
+
+
+        const appointments =
+            getAppointmentsForDate(
+                user,
+                date
+            );
+
+
+        list.innerHTML = "";
+
+
+        if (appointments.length === 0) {
+
+            list.innerHTML = `
+                <div style="
+                    text-align:center;
+                    padding:40px;
+                    color:#999;
+                ">
+                    Nenhum agendamento para esta data.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        appointments.forEach(
+            appointment =>
+                list.innerHTML +=
+                appointmentHTML(
+                    user,
+                    appointment
+                )
+        );
+    }
+
+
+    function renderDashboard() {
+
+        const user = getCurrentUser();
+
+        if (!user) return;
+
+
+        const today =
+            getToday();
+
+
+        const appointments =
+            getAppointmentsForDate(
+                user,
+                today
+            );
+
+
+        document.getElementById("todayAppointments")
+            .textContent =
+                appointments.length;
+
+
+        document.getElementById("totalClients")
+            .textContent =
+                user.clients.length;
+
+
+        let revenue = 0;
+
+
+        appointments.forEach(
+            appointment => {
+                revenue += Number(
+                    appointment.price || 0
+                );
+            }
+        );
+
+
+        document.getElementById("todayRevenue")
+            .textContent =
+                money(revenue);
+
+
+        const next =
+            appointments
+                .filter(
+                    appointment =>
+                        appointment.time >=
+                        new Date()
+                            .toTimeString()
+                            .slice(0,5)
+                )[0];
+
+
+        document.getElementById("nextAppointment")
+            .textContent =
+                next
+                    ? next.time
+                    : "--";
+
+
+        const todayList =
+            document.getElementById("todayList");
+
+
+        todayList.innerHTML = "";
+
+
+        if (appointments.length === 0) {
+
+            todayList.innerHTML = `
+                <div style="
+                    padding:30px;
+                    text-align:center;
+                    color:#999;
+                ">
+                    Você não tem atendimentos hoje. ✨
+                </div>
+            `;
+
+            return;
+        }
+
+
+        appointments.forEach(
+            appointment =>
+                todayList.innerHTML +=
+                appointmentHTML(
+                    user,
+                    appointment
+                )
+        );
+    }
+
+
+    function getAppointmentsForDate(
+        user,
+        date
+    ) {
+
+        return user.appointments
+
+            .filter(
+                appointment =>
+                    appointment.date === date
+            )
+
+            .sort(
+                (a,b) =>
+                    a.time.localeCompare(b.time)
+            );
+    }
+
+
+    function appointmentHTML(
+        user,
+        appointment
+    ) {
+
+        const client =
+            user.clients.find(
+                client =>
+                    client.id == appointment.clientId
+            );
+
+
+        const name =
+            client
+                ? client.name
+                : "Cliente removida";
+
+
+        return `
+
+            <div class="appointment">
+
+                <div class="appointment-time">
+                    ${appointment.time}
+                </div>
+
+
+                <div class="appointment-info">
+
+                    <div class="appointment-name">
+                        ${escapeHTML(name)}
+                    </div>
+
+                    <div class="appointment-service">
+                        ${escapeHTML(appointment.service)}
+                        ${appointment.price
+                            ? " • " + money(appointment.price)
+                            : ""}
+                    </div>
+
+                    ${
+                        appointment.notes
+                        ? `
+                            <div style="
+                                font-size:12px;
+                                color:#999;
+                                margin-top:4px;
+                            ">
+                                ${escapeHTML(appointment.notes)}
+                            </div>
+                        `
+                        : ""
+                    }
+
+                </div>
+
+
+                <div class="appointment-actions">
+
+                    <button
+                        class="small-btn btn-danger"
+                        onclick="deleteAppointment(${appointment.id})"
+                    >
+                        Excluir
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+    }
+
+
+    /* ======================================
+       FUNÇÕES AUXILIARES
+    ====================================== */
+
+    function formatDate(dateString) {
+
+        if (!dateString) return "--";
+
+
+        const [
+            year,
+            month,
+            day
+        ] =
+            dateString.split("-");
+
+
+        return `${day}/${month}/${year}`;
+    }
+
+
+    function money(value) {
+
+        return Number(value || 0)
+            .toLocaleString(
+                "pt-BR",
+                {
+                    style: "currency",
+                    currency: "BRL"
+                }
+            );
+    }
+
+
+    function escapeHTML(text) {
+
+        return String(text || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    /* ======================================
+       VERIFICAR LOGIN AO ABRIR
+    ====================================== */
+
+    window.addEventListener(
+        "DOMContentLoaded",
+        () => {
+
+            const loggedUser =
+                localStorage.getItem(
+                    "lash_logged_user"
+                );
+
+
+            if (loggedUser) {
+
+                loadApp();
+
+            } else {
+
+                document
+                    .getElementById("authScreen")
+                    .classList.remove("hidden");
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
